@@ -1,14 +1,18 @@
 package com.koralix.stepfn;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class SyncStepFunction<T, R> extends StepFunction<T, R, R> {
 
-    public SyncStepFunction(Step<T, ?> first, Map<Step<?, ?>, Collection<Transition<?, ?>>> transitions) {
+    public SyncStepFunction(Step<T, ?> first, Map<Step<?, ?>, Set<Transition<?>>> transitions) {
         super(first, transitions);
+    }
+
+    public SyncStepFunction(Step<T, ?> first) {
+        super(first);
     }
 
     @Override

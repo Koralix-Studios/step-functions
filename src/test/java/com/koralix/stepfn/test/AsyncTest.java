@@ -74,7 +74,7 @@ public class AsyncTest {
                 step1,
                 Map.ofEntries(
                         Map.entry(step1, Set.of(
-                                new Transition<String, String>() {
+                                new Transition<String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -87,7 +87,7 @@ public class AsyncTest {
                                 }
                         )),
                         Map.entry(step2, Set.of(
-                                new Transition<String, String>() {
+                                new Transition<String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -156,7 +156,7 @@ public class AsyncTest {
                 step1,
                 Map.ofEntries(
                         Map.entry(step1, Set.of(
-                                new Transition<String, String>() {
+                                new Transition<String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return input.equals("Hello");
@@ -167,7 +167,7 @@ public class AsyncTest {
                                         return step2;
                                     }
                                 },
-                                new Transition<String, String>() {
+                                new Transition<String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return input.equals("Bye");
@@ -180,7 +180,7 @@ public class AsyncTest {
                                 }
                         )),
                         Map.entry(step2, Set.of(
-                                new Transition<String, String>() {
+                                new Transition<String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -193,7 +193,7 @@ public class AsyncTest {
                                 }
                         )),
                         Map.entry(step3, Set.of(
-                                new Transition<String, String>() {
+                                new Transition<String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -264,7 +264,7 @@ public class AsyncTest {
                 step1,
                 Map.ofEntries(
                         Map.entry(step1, Set.of(
-                                new Transition<String, String>() {
+                                new Transition<String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -275,7 +275,7 @@ public class AsyncTest {
                                         return step2;
                                     }
                                 },
-                                new Transition<String, String>() {
+                                new Transition<String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -288,7 +288,7 @@ public class AsyncTest {
                                 }
                         )),
                         Map.entry(step2, Set.of(
-                                new Transition<String, String>() {
+                                new Transition<String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -301,7 +301,7 @@ public class AsyncTest {
                                 }
                         )),
                         Map.entry(step3, Set.of(
-                                new Transition<String, String>() {
+                                new Transition<String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;

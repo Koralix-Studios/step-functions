@@ -1,9 +1,9 @@
 package com.koralix.stepfn;
 
-public interface Transition<T, R> {
+public interface Transition<T> {
 
     boolean isApplicable(T input);
 
-    Step<R, ?> get();
+    Step<T, ?> get();
 
 }

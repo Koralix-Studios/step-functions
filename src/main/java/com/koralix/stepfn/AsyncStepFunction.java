@@ -1,6 +1,8 @@
 package com.koralix.stepfn;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -10,10 +12,15 @@ public class AsyncStepFunction<T, R> extends StepFunction<T, R, CompletableFutur
 
     public AsyncStepFunction(
             Step<T, ?> start,
-            Map<Step<?, ?>, Collection<Transition<?, ?>>> transitions,
+            Map<Step<?, ?>, Set<Transition<?>>> transitions,
             Executor executor
     ) {
         super(start, transitions);
+        this.executor = executor;
+    }
+
+    public AsyncStepFunction(Step<T, ?> start, Executor executor) {
+        super(start);
         this.executor = executor;
     }
 

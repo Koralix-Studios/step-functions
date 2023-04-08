@@ -1,25 +1,48 @@
 package com.koralix.stepfn;
 
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-public abstract class StepFunction<T, V, R> {
+public abstract class StepFunction<T, V, R> implements Function<T, R> {
 
     private final Step<T, ?> first;
-    private final Map<Step<?, ?>, Collection<Transition<?, ?>>> transitions;
+    private final Map<Step<?, ?>, Set<Transition<?>>> transitions = new HashMap<>();
 
     public StepFunction(
-            Step<T, ?> first, Map<Step<?, ?>,
-            Collection<Transition<?, ?>>> transitions
+            Step<T, ?> first,
+            Map<Step<?, ?>, Set<Transition<?>>> transitions
     ) {
         this.first = first;
-        this.transitions = transitions;
+        this.transitions.putAll(transitions.entrySet().stream().map(entry -> Map.entry(
+                entry.getKey(),
+                new HashSet<>(entry.getValue())
+        )).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
     }
 
-    public abstract R apply(T t);
+    public StepFunction(Step<T, ?> first) {
+        this.first = first;
+    }
+
+    public <A> void addTransition(Step<?, A> from, Step<A, ?> to, Function<A, Boolean> predicate) {
+        this.transitions.computeIfAbsent(from, step -> new HashSet<>()).add(new Transition<A>() {
+            @Override
+            public boolean isApplicable(A input) {
+                return predicate.apply(input);
+            }
+
+            @Override
+            public Step<A, ?> get() {
+                return to;
+            }
+        });
+    }
 
     @SuppressWarnings("unchecked")
     protected <A, B> void apply(Step<A, B> step, Step<?, A> from, A input, CompletableFuture<V> future) {
@@ -28,13 +51,13 @@ public abstract class StepFunction<T, V, R> {
             step.stepFunctionInput = null;
 
             completableFuture.thenAccept(b -> {
-                Collection<Transition<?, ?>> transitions = this.transitions(step);
+                Set<Transition<?>> transitions = this.transitions(step);
                 if (transitions == null) {
                     future.complete((V) b);
                     return;
                 }
                 List<? extends Step<B, ?>> nextSteps = transitions.stream()
-                        .map(transition -> (Transition<B, ?>) transition)
+                        .map(transition -> (Transition<B>) transition)
                         .filter(transition -> transition.isApplicable(b))
                         .map(Transition::get)
                         .map(next -> (Step<B, ?>) next)
@@ -53,7 +76,7 @@ public abstract class StepFunction<T, V, R> {
         return this.first;
     }
 
-    protected Collection<Transition<?, ?>> transitions(Step<?, ?> step) {
+    protected Set<Transition<?>> transitions(Step<?, ?> step) {
         return this.transitions.get(step);
     }
 
