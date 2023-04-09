@@ -1,0 +1,39 @@
+name: "💡 Feature Request"
+description: Suggest an idea for this project
+title: "💡 [FEATURE] - <title>"
+labels: [
+  "enhancement"
+]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: A clear and concise description of what the feature is.
+      placeholder: Short and explicit description of your feature request...
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: "Use case"
+      description: A clear and concise description of what the use case is.
+      placeholder: Short and explicit description of your use case...
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: "Proposed implementation"
+      description: A clear and concise description of what you want to happen.
+      placeholder: Short and explicit description of your proposed implementation...
+    validations:
+      required: false
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternatives"
+      description: A way to achieve the same result with the current API.
+      placeholder: Short and explicit description of your alternative solution...
+    validations:
+      required: false

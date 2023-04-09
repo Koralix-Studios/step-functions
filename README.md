@@ -119,3 +119,11 @@ It is important to note that all steps that can output a final result must retur
 
 Using the `addTransition` method during execution on an `AsyncStepFunction` may produce errors because thread safety is not guaranteed.
 Make sure to only add transitions before executing the `AsyncStepFunction`.
+
+## How to Contribute
+
+Read the [CONTRIBUTING](.github/CONTRIBUTING.md) file for more information.
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
