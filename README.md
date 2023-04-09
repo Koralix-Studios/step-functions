@@ -24,7 +24,7 @@ Make sure to also add the GitHub packages repository to your build file:
 <repositories>
   <repository>
     <id>github</id>
-    <url>https://maven.pkg.github.com/Koralix-Studios/StepFunctions</url>
+    <url>https://maven.pkg.github.com/koralix-studios/StepFunctions</url>
   </repository>
 </repositories>
 ```
