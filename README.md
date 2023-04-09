@@ -1,4 +1,4 @@
-# StepFunctions Library
+# Step Functions Library
 
 This library allows you to create multiple-step functions with two types: `SyncStepFunction<T, R>` and `AsyncStepFunction<T, R>`.
 Both types require an initial `Step<T, ?>` and an optional `Map<Step<?,?>, Set<Transition<?>>>` representing the initial defined transitions.
@@ -8,7 +8,7 @@ The `AsyncStepFunction<T, R>` also needs an `Executor`.
 
 ### Installation
 
-To install the StepFunctions library, add the following dependency to your project's build file:
+To install the **Step Functions** library, add the following dependency to your project's build file:
 
 ```xml
 <dependency>
