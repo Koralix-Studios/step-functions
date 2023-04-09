@@ -13,7 +13,7 @@ To install the StepFunctions library, add the following dependency to your proje
 ```xml
 <dependency>
   <groupId>com.koralix.stepfn</groupId>
-  <artifactId>StepFunctions</artifactId>
+  <artifactId>step-functions</artifactId>
   <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
@@ -24,7 +24,7 @@ Make sure to also add the GitHub packages repository to your build file:
 <repositories>
   <repository>
     <id>github</id>
-    <url>https://maven.pkg.github.com/koralix-studios/StepFunctions</url>
+    <url>https://maven.pkg.github.com/koralix-studios/step-functions</url>
   </repository>
 </repositories>
 ```
