@@ -133,10 +133,10 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
     @SuppressWarnings("unchecked")
     protected <A, B> void apply(Step<A, B> step, Step<?, A> from, A input, CompletableFuture<V> future) {
         this.step(step, from, input).ifPresent(completableFuture -> {
-            step.aggregation.clear();
-            step.stepFunctionInput = null;
-
             completableFuture.thenAccept(b -> {
+                step.aggregation.clear();
+                step.stepFunctionInput = null;
+
                 Set<Transition<?>> transitions = this.transitions(step);
                 if (transitions == null) {
                     future.complete((V) b);
