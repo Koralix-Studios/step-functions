@@ -64,7 +64,7 @@ import java.util.stream.Collectors;
 public abstract class StepFunction<T, V, R> implements Function<T, R> {
 
     private final Step<T, ?> initialStep;
-    private final Map<Step<?, ?>, Set<Transition<?>>> transitions = new HashMap<>();
+    private final Map<Step<?, ?>, Set<Transition<?, ?>>> transitions = new HashMap<>();
 
     /**
      * Creates a new {@link StepFunction} with the given initial {@link Step} and {@link Transition}s.
@@ -74,7 +74,7 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
      */
     public StepFunction(
             Step<T, ?> initialStep,
-            Map<Step<?, ?>, Set<Transition<?>>> transitions
+            Map<Step<?, ?>, Set<Transition<?, ?>>> transitions
     ) {
         this.initialStep = initialStep;
         this.transitions.putAll(transitions.entrySet().stream().map(entry -> Map.entry(
@@ -94,6 +94,41 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
 
     /**
      * Adds a {@link Transition} from the first given {@link Step} to the second given {@link Step}
+     * with the given predicate and mapper.
+     *
+     * @param from      the step to transition from
+     * @param to        the step to transition to
+     * @param predicate the predicate to determine if the transition is applicable
+     * @param mapper    the mapper to map the input to the next step
+     * @param <A>       the output type of the from step
+     * @param <B>       the input type of the to step
+     */
+    public <A, B> void addTransition(
+            Step<?, A> from,
+            Step<B, ?> to,
+            Function<A, Boolean> predicate,
+            Function<A, B> mapper
+    ) {
+        this.transitions.computeIfAbsent(from, step -> new HashSet<>()).add(new Transition<A, B>() {
+            @Override
+            public boolean isApplicable(A input) {
+                return predicate.apply(input);
+            }
+
+            @Override
+            public Step<B, ?> get() {
+                return to;
+            }
+
+            @Override
+            public B map(A input) {
+                return mapper.apply(input);
+            }
+        });
+    }
+
+    /**
+     * Adds a {@link Transition} from the first given {@link Step} to the second given {@link Step}
      * with the given predicate.
      *
      * @param from      the step to transition from
@@ -102,17 +137,7 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
      * @param <A>       the output type of the from step
      */
     public <A> void addTransition(Step<?, A> from, Step<A, ?> to, Function<A, Boolean> predicate) {
-        this.transitions.computeIfAbsent(from, step -> new HashSet<>()).add(new Transition<A>() {
-            @Override
-            public boolean isApplicable(A input) {
-                return predicate.apply(input);
-            }
-
-            @Override
-            public Step<A, ?> get() {
-                return to;
-            }
-        });
+        this.addTransition(from, to, predicate, input -> input);
     }
 
     /**
@@ -128,30 +153,24 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
      * @param input the input
      * @param future the future to complete
      * @param <A> the input type of the step
-     * @param <B> the output type of the step
+     * @param <C> the output type of the step
      */
     @SuppressWarnings("unchecked")
-    protected <A, B> void apply(Step<A, B> step, Step<?, A> from, A input, CompletableFuture<V> future) {
+    protected <A, B, C, D> void apply(Step<B, C> step, Step<?, A> from, B input, CompletableFuture<V> future) {
         this.step(step, from, input).ifPresent(completableFuture -> {
-            completableFuture.thenAccept(b -> {
+            completableFuture.thenAccept(stepResult -> {
                 step.aggregation.clear();
                 step.stepFunctionInput = null;
 
-                Set<Transition<?>> transitions = this.transitions(step);
-                if (transitions == null) {
-                    future.complete((V) b);
-                    return;
+                if (this.transitions(step).stream()
+                        .filter(transition -> transition.isApplicable(stepResult))
+                        .peek(transition -> {
+                            this.apply(transition.get(), step, transition.map(stepResult), future);
+                        })
+                        .count() == 0
+                ) {
+                    future.complete((V) stepResult);
                 }
-                List<? extends Step<B, ?>> nextSteps = transitions.stream()
-                        .map(transition -> (Transition<B>) transition)
-                        .filter(transition -> transition.isApplicable(b))
-                        .map(Transition::get)
-                        .map(next -> (Step<B, ?>) next)
-                        .toList();
-                if (nextSteps.isEmpty())
-                    future.complete((V) b);
-                else
-                    nextSteps.forEach(next -> this.apply(next, step, b, future));
             });
         });
     }
@@ -169,7 +188,7 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
      * @param <B>   the output type of the step
      * @return the result of the step
      */
-    protected abstract <A, B> Optional<CompletableFuture<B>> step(Step<A, B> step, Step<?, A> from, A input);
+    protected abstract <A, B, C> Optional<CompletableFuture<C>> step(Step<B, C> step, Step<?, A> from, B input);
 
     /**
      * Returns the initial {@link Step} of this {@link StepFunction}.
@@ -186,8 +205,12 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
      * @param step the step
      * @return the transitions
      */
-    protected Set<Transition<?>> transitions(Step<?, ?> step) {
-        return this.transitions.get(step);
+    @SuppressWarnings("unchecked")
+    protected <A, B> Set<Transition<A, B>> transitions(Step<?, A> step) {
+        Set<Transition<?, ?>> returnSet = this.transitions.get(step);
+        return returnSet == null ? Set.of() : returnSet.parallelStream()
+                .map(transition -> (Transition<A, B>) transition)
+                .collect(Collectors.toSet());
     }
 
 }
