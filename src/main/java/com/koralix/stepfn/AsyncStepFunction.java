@@ -33,6 +33,7 @@ public class AsyncStepFunction<T, R> extends StepFunction<T, R, CompletableFutur
      * @param transitions the transitions
      * @param executor    the executor to use for asynchronous computation
      * @deprecated use {@link #AsyncStepFunction(Step, Executor)} instead - this constructor will be removed in 1.2.0
+     * @since 1.0.0
      */
     public AsyncStepFunction(
             Step<T, ?> initialStep,
@@ -48,6 +49,7 @@ public class AsyncStepFunction<T, R> extends StepFunction<T, R, CompletableFutur
      *
      * @param initialStep the initial step
      * @param executor    the executor to use for asynchronous computation
+     * @since 1.0.0
      */
     public AsyncStepFunction(Step<T, ?> initialStep, Executor executor) {
         super(initialStep);
@@ -59,6 +61,7 @@ public class AsyncStepFunction<T, R> extends StepFunction<T, R, CompletableFutur
      *
      * @param t the function argument
      * @return the function result in a {@link CompletableFuture}
+     * @since 1.0.0
      */
     @Override
     public CompletableFuture<R> apply(T t) {
@@ -83,6 +86,7 @@ public class AsyncStepFunction<T, R> extends StepFunction<T, R, CompletableFutur
      * @param <B>   the type of the result of the step
      * @return the result of the step in a {@link CompletableFuture} if the step is complete,
      *         an empty {@link Optional} otherwise
+     * @since 1.0.0
      */
     @Override
     protected <A, B, C> Optional<CompletableFuture<C>> step(Step<B, C> step, Step<?, A> from, B input) {

@@ -16,6 +16,7 @@ public interface Transition<T, R> {
      *
      * @param input the input to check
      * @return true if the transition is applicable, false otherwise
+     * @since 1.0.0
      */
     boolean isApplicable(T input);
 
@@ -23,6 +24,7 @@ public interface Transition<T, R> {
      * Returns the next {@link Step} to transition to.
      *
      * @return the next {@link Step}
+     * @since 1.0.0
      */
     Step<R, ?> get();
 
@@ -31,6 +33,7 @@ public interface Transition<T, R> {
      *
      * @param input the input to map
      * @return the mapped input
+     * @since 1.1.0
      */
     R map(T input);
 

@@ -27,6 +27,7 @@ public class SyncStepFunction<T, R> extends StepFunction<T, R, R> {
      * @param initialStep the initial step
      * @param transitions the transitions
      * @deprecated use {@link #SyncStepFunction(Step)} instead - this constructor will be removed in 1.2.0
+     * @since 1.0.0
      */
     public SyncStepFunction(Step<T, ?> initialStep, Map<Step<?, ?>, Set<Transition<?, ?>>> transitions) {
         super(initialStep, transitions);
@@ -36,6 +37,7 @@ public class SyncStepFunction<T, R> extends StepFunction<T, R, R> {
      * Creates a new {@link SyncStepFunction} with the given initial step.
      *
      * @param initialStep the initial step
+     * @since 1.0.0
      */
     public SyncStepFunction(Step<T, ?> initialStep) {
         super(initialStep);
@@ -46,6 +48,7 @@ public class SyncStepFunction<T, R> extends StepFunction<T, R, R> {
      *
      * @param t the function argument
      * @return the function result
+     * @since 1.0.0
      */
     @Override
     public R apply(T t) {
@@ -70,6 +73,7 @@ public class SyncStepFunction<T, R> extends StepFunction<T, R, R> {
      * @param <B>   the type of the result of the step
      * @return the result of the step in a completed {@link CompletableFuture} if the step is complete,
      *         an empty {@link Optional} otherwise
+     * @since 1.0.0
      */
     @Override
     protected <A, B, C> Optional<CompletableFuture<C>> step(Step<B, C> step, Step<?, A> from, B input) {

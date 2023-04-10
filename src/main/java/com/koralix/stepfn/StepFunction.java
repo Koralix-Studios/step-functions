@@ -72,6 +72,7 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
      * @param initialStep the initial step
      * @param transitions the transitions
      * @deprecated use {@link #StepFunction(Step)} instead - this constructor will be removed in 1.2.0
+     * @since 1.0.0
      */
     public StepFunction(
             Step<T, ?> initialStep,
@@ -88,6 +89,7 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
      * Creates a new {@link StepFunction} with the given initial {@link Step}.
      *
      * @param initialStep the initial step
+     * @since 1.0.0
      */
     public StepFunction(Step<T, ?> initialStep) {
         this.initialStep = initialStep;
@@ -103,6 +105,7 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
      * @param mapper    the mapper to map the input to the next step
      * @param <A>       the output type of the from step
      * @param <B>       the input type of the to step
+     * @since 1.1.0
      */
     public <A, B> void addTransition(
             Step<?, A> from,
@@ -136,6 +139,7 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
      * @param to        the step to transition to
      * @param predicate the predicate to determine if the transition is applicable
      * @param <A>       the output type of the from step
+     * @since 1.0.0
      */
     public <A> void addTransition(Step<?, A> from, Step<A, ?> to, Function<A, Boolean> predicate) {
         this.addTransition(from, to, predicate, input -> input);
@@ -155,6 +159,7 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
      * @param future the future to complete
      * @param <A> the input type of the step
      * @param <C> the output type of the step
+     * @since 1.0.0
      */
     @SuppressWarnings("unchecked")
     protected <A, B, C, D> void apply(Step<B, C> step, Step<?, A> from, B input, CompletableFuture<V> future) {
