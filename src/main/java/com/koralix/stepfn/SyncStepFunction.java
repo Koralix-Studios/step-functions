@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
 /**
  * A {@link StepFunction} that computes its result synchronously.
@@ -29,6 +28,7 @@ public class SyncStepFunction<T, R> extends StepFunction<T, R, R> {
      * @deprecated use {@link #SyncStepFunction(Step)} instead - this constructor will be removed in 1.2.0
      * @since 1.0.0
      */
+    @Deprecated
     public SyncStepFunction(Step<T, ?> initialStep, Map<Step<?, ?>, Set<Transition<?, ?>>> transitions) {
         super(initialStep, transitions);
     }
@@ -69,14 +69,14 @@ public class SyncStepFunction<T, R> extends StepFunction<T, R, R> {
      * @param step  the step to apply
      * @param from  the step from which the input was received
      * @param input the input to the step
-     * @param <A>   the type of the input to the step
-     * @param <B>   the type of the result of the step
+     * @param <A>   the input type of the step
+     * @param <B>   the output type of the step
      * @return the result of the step in a completed {@link CompletableFuture} if the step is complete,
      *         an empty {@link Optional} otherwise
      * @since 1.0.0
      */
     @Override
-    protected <A, B, C> Optional<CompletableFuture<C>> step(Step<B, C> step, Step<?, A> from, B input) {
+    protected <A, B> Optional<CompletableFuture<B>> step(Step<A, B> step, Step<?, ?> from, A input) {
         step.aggregate(from, input);
         if (step.isComplete())
             return Optional.of(CompletableFuture.completedFuture(step.apply(input)));
