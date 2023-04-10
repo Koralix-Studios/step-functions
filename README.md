@@ -43,7 +43,7 @@ To create a `StepFunction`, you can use either the `SyncStepFunction` or `AsyncS
 Here’s an example of how to create a `SyncStepFunction`:
 
 ```java
-Step<String, Integer> initialStep = new Step<String, Integer>() {
+Step<String, Integer> initialStep = new Step<>() {
     @Override
     public boolean isComplete() {
         return true;
@@ -72,7 +72,7 @@ You can define additional steps and branches using the `addTransition` method.
 Here’s an example of how to add a transition from one step to another:
 
 ```java
-Step<Integer, Boolean> nextStep = new Step<Integer, Boolean>() {
+Step<Integer, Boolean> nextStep = new Step<>() {
     @Override
     public boolean isComplete() {
         return true;
