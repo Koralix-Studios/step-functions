@@ -28,6 +28,34 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+
+            pom {
+                name = "com.koralix.stepfn:step-functions"
+                description = 'Step Functions is a java library to create functions step-by-step with multi-branch logic.'
+                url = 'https://github.com/Koralix-Studios/step-functions'
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'https://github.com/Koralix-Studios/step-functions/blob/master/LICENSE'
+                    }
+                }
+
+                developers {
+                    developer {
+                        name = 'JohanVonElectrum'
+                        email = 'johanvonelectrum@gmail.com'
+                        organization = 'Koralix Studios'
+                        organizationUrl = 'https://www.koralix.com'
+                    }
+                }
+
+                scm {
+                    connection = 'scm:git:git://github.com/koralix-studios/step-functions.git'
+                    developerConnection = 'scm:git:ssh://github.com/koralix-studios/step-functions.git'
+                    url = 'https://github.com/Koralix-Studios/step-functions/tree/master'
+                }
+            }
         }
     }
 
