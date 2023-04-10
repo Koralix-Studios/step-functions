@@ -10,26 +10,35 @@ The `AsyncStepFunction<T, R>` also needs an `Executor`.
 
 To install the **Step Functions** library, add the following dependency to your project's build file:
 
-```xml
-<dependency>
-  <groupId>com.koralix.stepfn</groupId>
-  <artifactId>step-functions</artifactId>
-  <version>1.0-SNAPSHOT</version>
-</dependency>
+```kotlin
+dependencies {
+  implementation("com.koralix:step-functions:1.0.0")
+}
 ```
 
 Make sure to also add the GitHub packages repository to your build file:
 
-```xml
-<repositories>
-  <repository>
-    <id>github</id>
-    <url>https://maven.pkg.github.com/koralix-studios/step-functions</url>
-  </repository>
-</repositories>
+```kotlin
+repositories {
+  maven {
+    url = uri("https://maven.pkg.github.com/koralix-studios/step-functions")
+    credentials {
+      username = project.findProperty("gpr.user") as String?
+      password = project.findProperty("gpr.key") as String?
+    }
+  }
+}
+```
+
+Don't forget to add the following properties to your `gradle.properties` file:
+
+```properties
+gpr.user=your_github_username
+gpr.key=your_github_token
 ```
 
 ### Creating a StepFunction
+
 To create a `StepFunction`, you can use either the `SyncStepFunction` or `AsyncStepFunction` class.
 Here’s an example of how to create a `SyncStepFunction`:
 
