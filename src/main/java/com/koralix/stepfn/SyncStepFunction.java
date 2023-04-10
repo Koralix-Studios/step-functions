@@ -27,7 +27,7 @@ public class SyncStepFunction<T, R> extends StepFunction<T, R, R> {
      * @param initialStep the initial step
      * @param transitions the transitions
      */
-    public SyncStepFunction(Step<T, ?> initialStep, Map<Step<?, ?>, Set<Transition<?>>> transitions) {
+    public SyncStepFunction(Step<T, ?> initialStep, Map<Step<?, ?>, Set<Transition<?, ?>>> transitions) {
         super(initialStep, transitions);
     }
 
@@ -71,7 +71,7 @@ public class SyncStepFunction<T, R> extends StepFunction<T, R, R> {
      *         an empty {@link Optional} otherwise
      */
     @Override
-    protected <A, B> Optional<CompletableFuture<B>> step(Step<A, B> step, Step<?, A> from, A input) {
+    protected <A, B, C> Optional<CompletableFuture<C>> step(Step<B, C> step, Step<?, A> from, B input) {
         step.aggregate(from, input);
         if (step.isComplete())
             return Optional.of(CompletableFuture.completedFuture(step.apply(input)));

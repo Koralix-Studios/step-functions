@@ -35,7 +35,7 @@ public class AsyncStepFunction<T, R> extends StepFunction<T, R, CompletableFutur
      */
     public AsyncStepFunction(
             Step<T, ?> initialStep,
-            Map<Step<?, ?>, Set<Transition<?>>> transitions,
+            Map<Step<?, ?>, Set<Transition<?, ?>>> transitions,
             Executor executor
     ) {
         super(initialStep, transitions);
@@ -84,7 +84,7 @@ public class AsyncStepFunction<T, R> extends StepFunction<T, R, CompletableFutur
      *         an empty {@link Optional} otherwise
      */
     @Override
-    protected <A, B> Optional<CompletableFuture<B>> step(Step<A, B> step, Step<?, A> from, A input) {
+    protected <A, B, C> Optional<CompletableFuture<C>> step(Step<B, C> step, Step<?, A> from, B input) {
         step.aggregate(from, input);
         if (step.isComplete())
             return Optional.of(CompletableFuture.supplyAsync(() -> step.apply(input), this.executor));

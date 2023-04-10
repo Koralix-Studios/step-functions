@@ -18,7 +18,7 @@ public abstract class Step<T, R> implements Function<T, R> {
     /**
      * The aggregation of the inputs from the previous steps.
      */
-    protected final Map<Step<?, T>, T> aggregation = new HashMap<>();
+    protected final Map<Step<?, ?>, T> aggregation = new HashMap<>();
 
     /**
      * The input from the step function.
@@ -33,7 +33,7 @@ public abstract class Step<T, R> implements Function<T, R> {
      * @param from the step that produced the input
      * @param input the input
      */
-    public void aggregate(Step<?, T> from, T input) {
+    public void aggregate(Step<?, ?> from, T input) {
         if (from == null)
             this.stepFunctionInput = input;
         else
