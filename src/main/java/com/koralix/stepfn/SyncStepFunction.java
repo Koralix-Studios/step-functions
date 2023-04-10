@@ -26,6 +26,7 @@ public class SyncStepFunction<T, R> extends StepFunction<T, R, R> {
      *
      * @param initialStep the initial step
      * @param transitions the transitions
+     * @deprecated use {@link #SyncStepFunction(Step)} instead - this constructor will be removed in 1.2.0
      */
     public SyncStepFunction(Step<T, ?> initialStep, Map<Step<?, ?>, Set<Transition<?, ?>>> transitions) {
         super(initialStep, transitions);

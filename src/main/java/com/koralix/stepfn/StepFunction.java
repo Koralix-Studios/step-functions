@@ -71,6 +71,7 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
      *
      * @param initialStep the initial step
      * @param transitions the transitions
+     * @deprecated use {@link #StepFunction(Step)} instead - this constructor will be removed in 1.2.0
      */
     public StepFunction(
             Step<T, ?> initialStep,
@@ -187,6 +188,7 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
      * @param <A>   the input type of the step
      * @param <B>   the output type of the step
      * @return the result of the step
+     * @since 1.0.0
      */
     protected abstract <A, B, C> Optional<CompletableFuture<C>> step(Step<B, C> step, Step<?, A> from, B input);
 
@@ -194,6 +196,7 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
      * Returns the initial {@link Step} of this {@link StepFunction}.
      *
      * @return the initial step
+     * @since 1.0.0
      */
     protected Step<T, ?> firstStep() {
         return this.initialStep;
@@ -204,6 +207,7 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
      *
      * @param step the step
      * @return the transitions
+     * @since 1.0.0
      */
     @SuppressWarnings("unchecked")
     protected <A, B> Set<Transition<A, B>> transitions(Step<?, A> step) {

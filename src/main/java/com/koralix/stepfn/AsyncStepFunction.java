@@ -32,6 +32,7 @@ public class AsyncStepFunction<T, R> extends StepFunction<T, R, CompletableFutur
      * @param initialStep the initial step
      * @param transitions the transitions
      * @param executor    the executor to use for asynchronous computation
+     * @deprecated use {@link #AsyncStepFunction(Step, Executor)} instead - this constructor will be removed in 1.2.0
      */
     public AsyncStepFunction(
             Step<T, ?> initialStep,
