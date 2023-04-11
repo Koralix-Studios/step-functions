@@ -3,8 +3,8 @@ package com.koralix.stepfn;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 /**
  * A {@link StepFunction} that returns a {@link CompletableFuture}.
@@ -24,37 +24,38 @@ import java.util.concurrent.Executor;
  */
 public class AsyncStepFunction<T, R> extends StepFunction<T, R, CompletableFuture<R>> {
 
-    private final Executor executor;
+    private final Supplier<ExecutorService> executorSupplier;
+    private ExecutorService executor;
 
     /**
      * Creates a new {@link AsyncStepFunction} with the given initial step and transitions.
      *
-     * @param initialStep the initial step
-     * @param transitions the transitions
-     * @param executor    the executor to use for asynchronous computation
-     * @deprecated use {@link #AsyncStepFunction(Step, Executor)} instead - this constructor will be removed in 1.2.0
+     * @param initialStep      the initial step
+     * @param transitions      the transitions
+     * @param executorSupplier the supplier of the executor to use for asynchronous computation
+     * @deprecated use {@link #AsyncStepFunction(Step, Supplier)} instead - this constructor will be removed in 1.2.0
      * @since 1.0.0
      */
     @Deprecated
     public AsyncStepFunction(
             Step<T, ?> initialStep,
             Map<Step<?, ?>, Set<Transition<?, ?>>> transitions,
-            Executor executor
+            Supplier<ExecutorService> executorSupplier
     ) {
         super(initialStep, transitions);
-        this.executor = executor;
+        this.executorSupplier = executorSupplier;
     }
 
     /**
      * Creates a new {@link AsyncStepFunction} with the given initial step.
      *
-     * @param initialStep the initial step
-     * @param executor    the executor to use for asynchronous computation
+     * @param initialStep      the initial step
+     * @param executorSupplier the supplier of the executor to use for asynchronous computation
      * @since 1.0.0
      */
-    public AsyncStepFunction(Step<T, ?> initialStep, Executor executor) {
+    public AsyncStepFunction(Step<T, ?> initialStep, Supplier<ExecutorService> executorSupplier) {
         super(initialStep);
-        this.executor = executor;
+        this.executorSupplier = executorSupplier;
     }
 
     /**
@@ -67,7 +68,11 @@ public class AsyncStepFunction<T, R> extends StepFunction<T, R, CompletableFutur
     @Override
     public CompletableFuture<R> apply(T t) {
         CompletableFuture<R> future = new CompletableFuture<>();
+        this.executor = this.executorSupplier.get();
         this.apply(this.firstStep(), null, t, future);
+        future.whenComplete((r, e) -> {
+            this.executor.shutdownNow();
+        });
         return future;
     }
 
@@ -90,9 +95,14 @@ public class AsyncStepFunction<T, R> extends StepFunction<T, R, CompletableFutur
     @Override
     protected <A, B> Optional<CompletableFuture<B>> step(Step<A, B> step, Step<?, ?> from, A input) {
         step.aggregate(from, input);
-        if (step.isComplete())
-            return Optional.of(CompletableFuture.supplyAsync(() -> step.apply(input), this.executor));
-        else
+        if (step.isComplete()) {
+            try {
+                return Optional.of(CompletableFuture.supplyAsync(() -> step.apply(input), this.executor));
+            } catch (RejectedExecutionException ignored) {
+                return Optional.empty();
+            }
+        } else {
             return Optional.empty();
+        }
     }
 }

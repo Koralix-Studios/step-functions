@@ -29,7 +29,7 @@ public class AsyncTest {
         StepFunction<String, String, CompletableFuture<String>> stepFunction = new AsyncStepFunction<>(
                 step,
                 Map.ofEntries(),
-                Executors.newFixedThreadPool(8)
+                () -> Executors.newFixedThreadPool(8)
         );
         CompletableFuture<String> future = stepFunction.apply("test");
         future.thenAccept(s -> Assertions.assertEquals("test", s));
@@ -110,7 +110,7 @@ public class AsyncTest {
                                 }
                         ))
                 ),
-                Executors.newFixedThreadPool(8)
+                () -> Executors.newFixedThreadPool(8)
         );
         CompletableFuture<String> future = stepFunction.apply("test");
         future.thenAccept(s -> Assertions.assertEquals("TEST_", s));
@@ -236,7 +236,7 @@ public class AsyncTest {
                                 }
                         ))
                 ),
-                Executors.newFixedThreadPool(8)
+                () -> Executors.newFixedThreadPool(8)
         );
         CompletableFuture<String> alice = stepFunction.apply("Hello");
         alice.thenAccept(s -> Assertions.assertEquals("Hello Alice!", s));
@@ -364,7 +364,7 @@ public class AsyncTest {
                                 }
                         ))
                 ),
-                Executors.newFixedThreadPool(8)
+                () -> Executors.newFixedThreadPool(8)
         );
         CompletableFuture<Collection<String>> result = stepFunction.apply("Hello");
         result.thenAccept(s -> Assertions.assertEquals(Set.of("Hello Alice", "Hello Bob"), s));
