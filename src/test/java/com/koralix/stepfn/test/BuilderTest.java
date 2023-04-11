@@ -12,16 +12,11 @@ public class BuilderTest {
 
     @Test
     public void sync() {
-        SyncStepFunction<String, Boolean> syncStepFunction = StepFunctionBuilder.step(
-                step -> true,
-                String::length
-        ).transition(
-                step -> true,
-                StepFunctionBuilder.<Integer, Boolean>step(
+        SyncStepFunction<String, Boolean> syncStepFunction = StepFunctionBuilder.step(String::length)
+                .transition(
                         step -> true,
-                        input -> input > 5
-                )
-        ).sync();
+                        StepFunctionBuilder.step(input -> input > 5)
+                ).sync();
 
         Assertions.assertTrue(syncStepFunction.apply("Hello World"));
         Assertions.assertFalse(syncStepFunction.apply("Hello"));
@@ -29,19 +24,44 @@ public class BuilderTest {
 
     @Test
     public void async() {
-        AsyncStepFunction<String, Boolean> asyncStepFunction = StepFunctionBuilder.step(
-                step -> true,
-                String::length
-        ).transition(
-                step -> true,
-                StepFunctionBuilder.<Integer, Boolean>step(
+        AsyncStepFunction<String, Boolean> asyncStepFunction = StepFunctionBuilder.step(String::length)
+                .transition(
                         step -> true,
-                        input -> input > 5
-                )
-        ).async(() -> Executors.newFixedThreadPool(8));
+                        StepFunctionBuilder.step(input -> input > 5)
+                ).async(() -> Executors.newFixedThreadPool(8));
 
         Assertions.assertTrue(asyncStepFunction.apply("Hello World").join());
         Assertions.assertFalse(asyncStepFunction.apply("Hello").join());
+    }
+
+    @Test
+    public void aggregation() {
+        StepFunctionBuilder<Integer, Integer> lastStep = StepFunctionBuilder.step(
+                aggregation -> aggregation.size() == 2,
+                (input, aggregation) -> aggregation.values().stream().mapToInt(Integer::intValue).sum()
+        );
+
+        SyncStepFunction<String, Integer> syncStepFunction = StepFunctionBuilder.step(String::length)
+                .transition(
+                        step -> true,
+                        StepFunctionBuilder.<Integer, Integer>step(
+                                input -> input + 1
+                        ).transition(
+                                step -> true,
+                                lastStep
+                        )
+                ).transition(
+                        step -> true,
+                        StepFunctionBuilder.<Integer, Integer>step(
+                                input -> input + 1
+                        ).transition(
+                                step -> true,
+                                lastStep
+                        )
+                ).sync();
+
+        Assertions.assertEquals(24, syncStepFunction.apply("Hello World"));
+        Assertions.assertEquals(12, syncStepFunction.apply("Hello"));
     }
 
 }
