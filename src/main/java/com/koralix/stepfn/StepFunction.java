@@ -178,6 +178,9 @@ public abstract class StepFunction<T, V, R> implements Function<T, R> {
                 ) {
                     future.complete((V) stepResult);
                 }
+            }).exceptionally(throwable -> {
+                future.completeExceptionally(throwable);
+                return null;
             });
         });
     }
