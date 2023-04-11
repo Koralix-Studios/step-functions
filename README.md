@@ -1,4 +1,9 @@
 # Step Functions Library
+![Stars Count](https://img.shields.io/github/stars/koralix-studios/step-functions)
+![Issues Count](https://img.shields.io/github/issues/koralix-studios/step-functions)
+![PR Count](https://img.shields.io/github/issues-pr/koralix-studios/step-functions)
+![Build Status](https://img.shields.io/github/actions/workflow/status/koralix-studios/step-functions/build.yml)
+![Latest Release](https://img.shields.io/github/v/release/koralix-studios/step-functions)
 
 The Step Functions library is a powerful and flexible tool for creating multiple-step functions.
 It provides users with the ability to create both synchronous and asynchronous step functions with ease.
@@ -114,8 +119,8 @@ It is important to note that all steps that can output a final result must retur
 Using the `addTransition` method during execution on an `AsyncStepFunction` may produce errors because thread safety is not guaranteed.
 Make sure to only add transitions before executing the `AsyncStepFunction`.
 
-## How to Contribute
+## How to Contribute ![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)
 Read the [CONTRIBUTING](.github/CONTRIBUTING.md) file for more information.
 
-## License
+## License ![License](https://img.shields.io/github/license/koralix-studios/step-functions)
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
