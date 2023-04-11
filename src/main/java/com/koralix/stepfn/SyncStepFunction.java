@@ -53,8 +53,6 @@ public class SyncStepFunction<T, R> extends StepFunction<T, R, R> {
     @Override
     public R apply(T t) {
         CompletableFuture<R> future = new CompletableFuture<>();
-        // TODO: check that null is stored in the aggregation map
-        //       may be a problem to read the value from the map
         this.apply(this.firstStep(), null, t, future);
         return future.join();
     }
