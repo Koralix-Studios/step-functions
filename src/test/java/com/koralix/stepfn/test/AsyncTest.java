@@ -29,7 +29,7 @@ public class AsyncTest {
         StepFunction<String, String, CompletableFuture<String>> stepFunction = new AsyncStepFunction<>(
                 step,
                 Map.ofEntries(),
-                Executors.newFixedThreadPool(8)
+                () -> Executors.newFixedThreadPool(8)
         );
         CompletableFuture<String> future = stepFunction.apply("test");
         future.thenAccept(s -> Assertions.assertEquals("test", s));
@@ -74,7 +74,7 @@ public class AsyncTest {
                 step1,
                 Map.ofEntries(
                         Map.entry(step1, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -84,10 +84,15 @@ public class AsyncTest {
                                     public Step<String, String> get() {
                                         return step2;
                                     }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
+                                    }
                                 }
                         )),
                         Map.entry(step2, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -97,10 +102,15 @@ public class AsyncTest {
                                     public Step<String, String> get() {
                                         return step3;
                                     }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
+                                    }
                                 }
                         ))
                 ),
-                Executors.newFixedThreadPool(8)
+                () -> Executors.newFixedThreadPool(8)
         );
         CompletableFuture<String> future = stepFunction.apply("test");
         future.thenAccept(s -> Assertions.assertEquals("TEST_", s));
@@ -156,7 +166,7 @@ public class AsyncTest {
                 step1,
                 Map.ofEntries(
                         Map.entry(step1, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return input.equals("Hello");
@@ -166,8 +176,13 @@ public class AsyncTest {
                                     public Step<String, String> get() {
                                         return step2;
                                     }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
+                                    }
                                 },
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return input.equals("Bye");
@@ -177,10 +192,15 @@ public class AsyncTest {
                                     public Step<String, String> get() {
                                         return step3;
                                     }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
+                                    }
                                 }
                         )),
                         Map.entry(step2, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -189,11 +209,16 @@ public class AsyncTest {
                                     @Override
                                     public Step<String, String> get() {
                                         return step4;
+                                    }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
                                     }
                                 }
                         )),
                         Map.entry(step3, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -203,10 +228,15 @@ public class AsyncTest {
                                     public Step<String, String> get() {
                                         return step4;
                                     }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
+                                    }
                                 }
                         ))
                 ),
-                Executors.newFixedThreadPool(8)
+                () -> Executors.newFixedThreadPool(8)
         );
         CompletableFuture<String> alice = stepFunction.apply("Hello");
         alice.thenAccept(s -> Assertions.assertEquals("Hello Alice!", s));
@@ -264,7 +294,7 @@ public class AsyncTest {
                 step1,
                 Map.ofEntries(
                         Map.entry(step1, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -274,8 +304,13 @@ public class AsyncTest {
                                     public Step<String, String> get() {
                                         return step2;
                                     }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
+                                    }
                                 },
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -285,10 +320,15 @@ public class AsyncTest {
                                     public Step<String, String> get() {
                                         return step3;
                                     }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
+                                    }
                                 }
                         )),
                         Map.entry(step2, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -297,11 +337,16 @@ public class AsyncTest {
                                     @Override
                                     public Step<String, ?> get() {
                                         return step4;
+                                    }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
                                     }
                                 }
                         )),
                         Map.entry(step3, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -311,10 +356,15 @@ public class AsyncTest {
                                     public Step<String, ?> get() {
                                         return step4;
                                     }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
+                                    }
                                 }
                         ))
                 ),
-                Executors.newFixedThreadPool(8)
+                () -> Executors.newFixedThreadPool(8)
         );
         CompletableFuture<Collection<String>> result = stepFunction.apply("Hello");
         result.thenAccept(s -> Assertions.assertEquals(Set.of("Hello Alice", "Hello Bob"), s));

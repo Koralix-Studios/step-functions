@@ -73,7 +73,7 @@ public class SyncTest {
                 step1,
                 Map.ofEntries(
                         Map.entry(step1, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -83,10 +83,15 @@ public class SyncTest {
                                     public Step<String, String> get() {
                                         return step2;
                                     }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
+                                    }
                                 }
                         )),
                         Map.entry(step2, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -95,6 +100,11 @@ public class SyncTest {
                                     @Override
                                     public Step<String, String> get() {
                                         return step3;
+                                    }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
                                     }
                                 }
                         ))
@@ -154,7 +164,7 @@ public class SyncTest {
                 step1,
                 Map.ofEntries(
                         Map.entry(step1, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return input.equals("Hello");
@@ -164,8 +174,13 @@ public class SyncTest {
                                     public Step<String, String> get() {
                                         return step2;
                                     }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
+                                    }
                                 },
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return input.equals("Bye");
@@ -175,10 +190,15 @@ public class SyncTest {
                                     public Step<String, String> get() {
                                         return step3;
                                     }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
+                                    }
                                 }
                         )),
                         Map.entry(step2, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -187,11 +207,16 @@ public class SyncTest {
                                     @Override
                                     public Step<String, String> get() {
                                         return step4;
+                                    }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
                                     }
                                 }
                         )),
                         Map.entry(step3, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -200,6 +225,11 @@ public class SyncTest {
                                     @Override
                                     public Step<String, String> get() {
                                         return step4;
+                                    }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
                                     }
                                 }
                         ))
@@ -261,7 +291,7 @@ public class SyncTest {
                 step1,
                 Map.ofEntries(
                         Map.entry(step1, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -271,8 +301,13 @@ public class SyncTest {
                                     public Step<String, String> get() {
                                         return step2;
                                     }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
+                                    }
                                 },
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -282,10 +317,15 @@ public class SyncTest {
                                     public Step<String, String> get() {
                                         return step3;
                                     }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
+                                    }
                                 }
                         )),
                         Map.entry(step2, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -294,11 +334,16 @@ public class SyncTest {
                                     @Override
                                     public Step<String, ?> get() {
                                         return step4;
+                                    }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
                                     }
                                 }
                         )),
                         Map.entry(step3, Set.of(
-                                new Transition<String>() {
+                                new Transition<String, String>() {
                                     @Override
                                     public boolean isApplicable(String input) {
                                         return true;
@@ -307,6 +352,11 @@ public class SyncTest {
                                     @Override
                                     public Step<String, ?> get() {
                                         return step4;
+                                    }
+
+                                    @Override
+                                    public String map(String input) {
+                                        return input;
                                     }
                                 }
                         ))

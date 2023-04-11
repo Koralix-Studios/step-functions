@@ -17,13 +17,15 @@ public abstract class Step<T, R> implements Function<T, R> {
 
     /**
      * The aggregation of the inputs from the previous steps.
+     * @since 1.0.0
      */
-    protected final Map<Step<?, T>, T> aggregation = new HashMap<>();
+    protected final Map<Step<?, ?>, T> aggregation = new HashMap<>();
 
     /**
      * The input from the step function.
      * <p>
      * This is only used for the first step.
+     * @since 1.0.0
      */
     protected T stepFunctionInput;
 
@@ -32,8 +34,9 @@ public abstract class Step<T, R> implements Function<T, R> {
      *
      * @param from the step that produced the input
      * @param input the input
+     * @since 1.0.0
      */
-    public void aggregate(Step<?, T> from, T input) {
+    public void aggregate(Step<?, ?> from, T input) {
         if (from == null)
             this.stepFunctionInput = input;
         else
@@ -44,6 +47,7 @@ public abstract class Step<T, R> implements Function<T, R> {
      * Checks if the step has all the required inputs to be executed.
      *
      * @return true if the step is complete, false otherwise
+     * @since 1.0.0
      */
     public abstract boolean isComplete();
 
