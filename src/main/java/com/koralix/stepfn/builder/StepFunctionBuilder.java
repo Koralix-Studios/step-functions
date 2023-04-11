@@ -7,9 +7,11 @@ import com.koralix.stepfn.SyncStepFunction;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -42,7 +44,36 @@ public class StepFunctionBuilder<T, R> {
      * @see StepFunction
      * @since 1.1.0
      */
-    public static <T, V> StepFunctionBuilder<T, V> step(Function<Step<T, V>, Boolean> isComplete, Function<T, V> apply) {
+    public static <T, V> StepFunctionBuilder<T, V> step(
+            Function<Map<Step<?, ?>, T>, Boolean> isComplete,
+            BiFunction<T, Map<Step<?, ?>, T>, V> apply
+    ) {
+        return new StepFunctionBuilder<>(new Step<T, V>() {
+            @Override
+            public V apply(T input) {
+                return apply.apply(input, this.aggregation);
+            }
+
+            @Override
+            public boolean isComplete() {
+                return isComplete.apply(this.aggregation);
+            }
+        });
+    }
+
+    /**
+     * Creates a new {@link StepFunctionBuilder} with the given initial step.
+     *
+     * @param apply      the function to apply to the input
+     * @param <T>        the type of the input to the function
+     * @param <V>        the type of the result of the function
+     * @return a new {@link StepFunctionBuilder}
+     * @see StepFunction
+     * @since 1.1.0
+     */
+    public static <T, V> StepFunctionBuilder<T, V> step(
+            Function<T, V> apply
+    ) {
         return new StepFunctionBuilder<>(new Step<T, V>() {
             @Override
             public V apply(T input) {
@@ -51,7 +82,7 @@ public class StepFunctionBuilder<T, R> {
 
             @Override
             public boolean isComplete() {
-                return isComplete.apply(this);
+                return true;
             }
         });
     }
