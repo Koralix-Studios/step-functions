@@ -83,8 +83,8 @@ AsyncStepFunction<String, Integer> asyncStepFunction = StepFunctionBuilder.step(
                 )
         ).async(() -> Executors.newFixedThreadPool(8));
 
-asyncStepFunction.apply("Hello World"); // returns 24
-asyncStepFunction.apply("Hello"); // returns 12
+asyncStepFunction.apply("Hello World").join(); // returns 24
+asyncStepFunction.apply("Hello").join();       // returns 12
 ```
 In this example, we create an `AsyncStepFunction` that takes a `String` as input and returns an `Integer` as output.
 The function first applies the `String::length` step to compute the length of the input string.
