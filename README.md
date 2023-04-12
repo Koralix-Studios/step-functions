@@ -9,15 +9,12 @@ The Step Functions library is a powerful and flexible tool for creating multiple
 It provides users with the ability to create both synchronous and asynchronous step functions with ease.
 The library offers flexibility in defining custom steps and transitions, allowing for the creation of complex workflows with capabilities such as parallel branching, conditional branching, and branch merging with aggregation.
 
-## 🛠️ How to Use
-For a more complete and up-to-date Getting Started guide, please visit our [wiki home page](https://github.com/koralix-studios/step-functions/wiki). 😊
-
-### 💻 Installation
+## 💻 Installation
 To install the **Step Functions** library, add the following dependency to your project's build file:
 
 ```kotlin
 dependencies {
-  implementation("com.koralix:step-functions:1.1.1")
+  implementation("com.koralix.stepfn:step-functions:1.1.1")
 }
 ```
 Make sure to also add the GitHub packages repository to your build file:
@@ -38,89 +35,78 @@ gpr.user=your_github_username
 gpr.key=your_github_token
 ```
 
-### 📝 Creating a StepFunction
-To create a `StepFunction`, you can use either the `SyncStepFunction` or `AsyncStepFunction` class.
-Here’s an example of how to create a `SyncStepFunction`:
+## Usage Examples
+### 🚀 Basic Usage
+Here’s a basic usage example that demonstrates how to create a synchronous step function using the Step Functions library:
 
 ```java
-Step<String, Integer> initialStep = new Step<>() {
-    @Override
-    public boolean isComplete() {
-        return true;
-    }
+SyncStepFunction<String, Boolean> syncStepFunction = StepFunctionBuilder.step(String::length)
+        .transition(
+                step -> true,
+                StepFunctionBuilder.step(input -> input > 5)
+        ).sync();
 
-    @Override
-    public Integer apply(String input) {
-        return input.length();
-    }
-};
-
-SyncStepFunction<String, Boolean> stepFunction = new SyncStepFunction<>(initialStep);
+syncStepFunction.apply("Hello World"); // returns true
+syncStepFunction.apply("Hello"); // returns false
 ```
-And here’s an example of how to create an `AsyncStepFunction`:
-```java
-Executor executor = Executors.newFixedThreadPool(4);
+In this example, we create a `SyncStepFunction` that takes a `String` as input and returns a `Boolean` as output.
+The function first applies the `String::length` step to compute the length of the input string.
+It then transitions to a second step that checks if the length of the input string is greater than 5.
+The first call to `apply` returns `true` because the length of “Hello World” is greater than 5, while the second call returns `false` because the length of “Hello” is not greater than 5.
 
-AsyncStepFunction<String, Boolean> stepFunction = new AsyncStepFunction<>(initialStep, executor);
-```
+### 🔧 Advanced Usage
 
-### 🌳 Defining Steps and Branches
-You can define additional steps and branches using the `addTransition` method.
-Here’s an example of how to add a transition from one step to another:
+Here’s an advanced usage example that demonstrates how to create an asynchronous step function with parallel branching and branch merging using aggregation:
 
 ```java
-Step<Integer, Boolean> nextStep = new Step<>() {
-    @Override
-    public boolean isComplete() {
-        return true;
-    }
+StepFunctionBuilder<Integer, Integer> lastStep = StepFunctionBuilder.step(
+        aggregation -> aggregation.size() == 2,
+        (input, aggregation) -> aggregation.values().stream().mapToInt(Integer::intValue).sum()
+);
 
-    @Override
-    public Boolean apply(Integer input) {
-        return input % 2 == 0;
-    }
-};
+AsyncStepFunction<String, Integer> asyncStepFunction = StepFunctionBuilder.step(String::length)
+        .transition(
+                step -> true,
+                StepFunctionBuilder.<Integer, Integer>step(
+                        input -> input + 1
+                ).transition(
+                        step -> true,
+                        lastStep
+                )
+        ).transition(
+                step -> true,
+                StepFunctionBuilder.<Integer, Integer>step(
+                        input -> input + 1
+                ).transition(
+                        step -> true,
+                        lastStep
+                )
+        ).async(() -> Executors.newFixedThreadPool(8));
 
-stepFunction.addTransition(initialStep, nextStep, input -> input > 5);
+asyncStepFunction.apply("Hello World").join(); // returns 24
+asyncStepFunction.apply("Hello").join();       // returns 12
 ```
-In this example, we added a transition from the `initialStep` to the `nextStep`.
-The transition will only be applied if the output of the `initialStep` is greater than 5.
+In this example, we create an `AsyncStepFunction` that takes a `String` as input and returns an `Integer` as output.
+The function first applies the `String::length` step to compute the length of the input string.
+It then transitions to two parallel branches that both apply a step that adds 1 to the length of the input string.
+These two branches then merge into a final step that aggregates the results from both branches by summing them.
+The first call to `apply` returns 24 because “Hello World” has a length of 11 and both branches add 1 to this length before summing the results (11 + 1 + 11 + 1 = 24), while the second call returns 12 because “Hello” has a length of 5 (5 + 1 + 5 + 1 = 12).
 
-### ▶️ Executing a StepFunction
-To execute a `StepFunction`, you can use the `apply` method.
-Here’s an example of how to execute a `SyncStepFunction`:
+### 📝 More Usage Examples
+For a more complete and up-to-date guide, please visit our [wiki home page](https://github.com/koralix-studios/step-functions/wiki). 😊
 
-```java
-boolean result = stepFunction.apply("Hello World!");
-```
-And here’s an example of how to execute an `AsyncStepFunction`:
-```java
-CompletableFuture<Boolean> futureResult = stepFunction.apply("Hello World!");
-futureResult.thenAccept(result -> {
-  // some stuff
-});
-// or
-boolean result = futureResult.join();
-```
+## Known Issues
+### Issue 1: Dynamic addition of transitions to an executing asynchronous step function
+When a transition is added dynamically to an asynchronous step function while it is executing, the expected execution workflow may be altered.
+This can result in exceptions being thrown due to concurrent modifications of the internal transition map.
 
-### 🔀 Merging Branches
-When one step transitions to multiple steps with the same output, all the states are executed.
-Multiple execution branches can be merged into one using aggregation.
-When the library tries to execute a step, it first checks if it is completed. If it is not, the execution is not submitted.
-When a `Step` is applied multiple times from multiple branches, the result is aggregated in an internal variable.
-When the `isComplete` method returns true, this data can be used to compute an aggregated result in this step based on the multiple branches that called this step.
-
-### ⏹️ Termination
-The termination condition for a `StepFunction` is reached when any step executes and does not have any valid transition to another step.
-In this case, the output of that step will be the final result of the entire `StepFunction`.
-It is important to note that all steps that can output a final result must return the same type.
-
-### ❗ Possible Problems
-Using the `addTransition` method during execution on an `AsyncStepFunction` may produce errors because thread safety is not guaranteed.
-Make sure to only add transitions before executing the `AsyncStepFunction`.
+### Issue 2: Multiple steps with different return types
+If multiple steps within a step function have different return types, errors may occur.
+It is important to ensure that all terminal steps have the same return type or return a type that extends the output type of the step function.
 
 ## 👥 How to Contribute ![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)
-Read the [CONTRIBUTING](.github/CONTRIBUTING.md) file for more information.
+Contributions to Step Functions are welcome!
+Before contributing, please read our [code of conduct](CODE_OF_CONDUCT.md) and [contributing guidelines](.github/CONTRIBUTING.md).
 
 ## 📜 License ![License](https://img.shields.io/github/license/koralix-studios/step-functions)
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+This library is licensed under the Apache 2.0 License. See the [LICENSE](LICENSE) file for more information.
