@@ -10,7 +10,7 @@ public class DynamicCreationTest {
 
     @Test
     public void test() {
-        Step<String, String> step1 = new Step<String, String>() {
+        Step<String, String> step1 = new Step<>() {
             @Override
             public boolean isComplete() {
                 return true;
@@ -21,7 +21,7 @@ public class DynamicCreationTest {
                 return s;
             }
         };
-        Step<String, String> step2 = new Step<String, String>() {
+        Step<String, String> step2 = new Step<>() {
             @Override
             public boolean isComplete() {
                 return true;
