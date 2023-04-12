@@ -17,7 +17,7 @@ To install the **Step Functions** library, add the following dependency to your 
 
 ```kotlin
 dependencies {
-  implementation("com.koralix:step-functions:1.1.1")
+  implementation("com.koralix.stepfn:step-functions:1.1.1")
 }
 ```
 Make sure to also add the GitHub packages repository to your build file:
