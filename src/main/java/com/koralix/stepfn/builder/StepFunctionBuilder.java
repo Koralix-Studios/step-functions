@@ -42,7 +42,7 @@ public class StepFunctionBuilder<T, R> {
      * @param <V>        the type of the result of the function
      * @return a new {@link StepFunctionBuilder}
      * @see StepFunction
-     * @since 1.1.0
+     * @since 1.1.1
      */
     public static <T, V> StepFunctionBuilder<T, V> step(
             Function<Map<Step<?, ?>, T>, Boolean> isComplete,

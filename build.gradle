@@ -70,3 +70,14 @@ publishing {
         }
     }
 }
+
+// add the overview.html file to the javadoc
+javadoc {
+    title = "Step Functions - ${version}"
+    options {
+        overview = file("${rootDir}/javadoc/overview.html").absolutePath
+        windowTitle = "step-functions:${project.version}"
+        header = file("${rootDir}/javadoc/header.html").text.replaceAll("@version@", project.version as String)
+        locale = "en"
+    }
+}
