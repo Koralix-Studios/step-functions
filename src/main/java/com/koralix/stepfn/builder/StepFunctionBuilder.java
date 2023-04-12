@@ -28,6 +28,7 @@ public class StepFunctionBuilder<T, R> {
 
     private final Step<T, R> step;
     private final Set<TransitionData<R, ?>> transitions = new HashSet<>();
+    private boolean built = false;
 
     private StepFunctionBuilder(Step<T, R> step) {
         this.step = step;
@@ -99,15 +100,20 @@ public class StepFunctionBuilder<T, R> {
                     transition.mapper
             );
 
-            make(stepFunction, transition.to.transitions);
+            make(stepFunction, transition.to);
         }
     }
 
     private static void make(
             StepFunction<?, ?, ?> stepFunction,
-            Collection<? extends TransitionData<?, ?>> transitions
+            StepFunctionBuilder<?, ?> builder
     ) {
-        build(stepFunction, transitions.stream()
+        if (builder.built) {
+            return;
+        }
+        builder.built = true;
+
+        build(stepFunction, builder.transitions.stream()
                 .map(transitionData -> (TransitionData<?, ?>) transitionData)
                 .collect(Collectors.toList()));
     }
@@ -122,7 +128,7 @@ public class StepFunctionBuilder<T, R> {
      */
     public <V> SyncStepFunction<T, V> sync() {
         SyncStepFunction<T, V> stepFunction = new SyncStepFunction<>(this.step);
-        make(stepFunction, this.transitions);
+        make(stepFunction, this);
         return stepFunction;
     }
 
@@ -137,7 +143,7 @@ public class StepFunctionBuilder<T, R> {
      */
     public <V> AsyncStepFunction<T, V> async(Supplier<ExecutorService> executorSupplier) {
         AsyncStepFunction<T, V> stepFunction = new AsyncStepFunction<>(this.step, executorSupplier);
-        make(stepFunction, this.transitions);
+        make(stepFunction, this);
         return stepFunction;
     }
 
