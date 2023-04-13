@@ -21,6 +21,10 @@ java {
     withSourcesJar()
 }
 
+tasks.build {
+    dependsOn("signMavenJavaPublication")
+}
+
 tasks.named<Javadoc>("javadoc") {
     title = "Step Functions - ${version}"
     options {
