@@ -100,6 +100,7 @@ signing {
         System.getenv("SIGNING_PASSWORD") != null
     ) {
         useInMemoryPgpKeys(System.getenv("SIGNING_KEY"), System.getenv("SIGNING_PASSWORD"))
+        println("Using env")
     } else if (
         project.findProperty("signing.keyId") == null ||
         project.findProperty("signing.password") == null ||
@@ -108,6 +109,23 @@ signing {
         throw GradleException("Signing key is not configured and not available in env")
     } else {
         useGpgCmd()
+        println("Using properties")
+    }
+
+    if (System.getenv("SIGNING_KEY") != null) {
+        println("Env SIGNING_KEY is set.")
+    }
+    if (System.getenv("SIGNING_PASSWORD") != null) {
+        println("Env SIGNING_PASSWORD is set.")
+    }
+    if (project.findProperty("signing.keyId") != null) {
+        println("Property signing.keyId is set.")
+    }
+    if (project.findProperty("signing.password") != null) {
+        println("Property signing.password is set.")
+    }
+    if (project.findProperty("signing.secretKeyRingFile") != null) {
+        println("Property signing.secretKeyRingFile is set.")
     }
 
     sign(publishing.publications["mavenJava"])
