@@ -91,6 +91,23 @@ publishing {
 }
 
 signing {
-    useInMemoryPgpKeys(System.getenv("SIGNING_KEY"), System.getenv("SIGNING_PASSWORD"))
+    if (
+        System.getenv("SIGNING_KEY") != null &&
+        System.getenv("SIGNING_PASSWORD") != null
+    ) {
+        useInMemoryPgpKeys(System.getenv("SIGNING_KEY"), System.getenv("SIGNING_PASSWORD"))
+    } else if (
+        project.findProperty("signing.keyId") == null ||
+        project.findProperty("signing.password") == null ||
+        project.findProperty("signing.secretKeyRingFile") == null
+    ) {
+        println("Signing key is not configured and not available in env")
+        return@signing
+    } else {
+        useGpgCmd()
+    }
+
+    println("Signing key is configured")
+
     sign(publishing.publications["mavenJava"])
 }
