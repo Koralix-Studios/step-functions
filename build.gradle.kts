@@ -21,10 +21,6 @@ java {
     withSourcesJar()
 }
 
-tasks.build {
-    dependsOn("signMavenJavaPublication")
-}
-
 tasks.named<Javadoc>("javadoc") {
     title = "Step Functions - ${version}"
     options {
@@ -105,10 +101,13 @@ signing {
         project.findProperty("signing.password") == null ||
         project.findProperty("signing.secretKeyRingFile") == null
     ) {
-        throw GradleException("Signing key is not configured and not available in env")
+        println("Signing key is not configured and not available in env")
+        return@signing
     } else {
         useGpgCmd()
     }
+
+    println("Signing key is configured")
 
     sign(publishing.publications["mavenJava"])
 }
