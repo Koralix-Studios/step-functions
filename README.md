@@ -17,19 +17,26 @@ dependencies {
   implementation("com.koralix.stepfn:step-functions:1.1.1")
 }
 ```
-Make sure to also add the GitHub packages repository to your build file:
+Make sure to also add the Maven Central or GitHub packages repository to your build file:  
+#### Option 1: Add the Maven Central repository:
+```kotlin
+repositories {
+  mavenCentral()
+}
+```
+#### Option 2: Add the GitHub packages repository:
 ```kotlin
 repositories {
   maven {
     url = uri("https://maven.pkg.github.com/koralix-studios/step-functions")
     credentials {
       username = project.findProperty("gpr.user") as String?
-      password = project.findProperty("gpr.key") as String?
+      password = project.findProperty("gpr.key") as String? 
     }
   }
 }
 ```
-Don't forget to add the following properties to your `gradle.properties` file:
+Don’t forget to add the following properties to your `gradle.properties` file:
 ```properties
 gpr.user=your_github_username
 gpr.key=your_github_token
